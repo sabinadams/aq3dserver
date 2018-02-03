@@ -5,11 +5,14 @@
  */
 
 import React, { Component } from 'react';
+
 import {
+  Button,
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
+  ListView
 } from 'react-native';
 
 const instructions = Platform.select({
@@ -20,23 +23,51 @@ const instructions = Platform.select({
 });
 
 export default class App extends Component<{}> {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
-      </View>
-    );
+  constructor(){
+    super();
+    this.state[]={
+      ID: 0,
+      SortIndex: 0,
+      Name: "",
+      IP: 0,
+      Port: 0,
+      UserCount: 0,
+      MaxUsers: 0,
+      State: false,
+      Chat: false,
+      Language: "",
+      LocalIP: "",
+      LastUpdated: 0,
+      Buildversion: 0,
+      Hostname: "",
+    }
   }
-}
 
+  ComponentDidMount(){
+    return fetch('http://game.aq3d.com/api/Game/ServerList')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        let ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+        this.setState({
+          isLoading: false,
+          dataSource: ds.cloneWithRows(responseJson),
+        }, function () {
+          alert(dataSource)
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    }
+ render() {
+  return (
+    <ListView
+      dataSource={this.state.dataSource}
+      renderRow={(rowData) => <Text>{rowData}</Text>}
+    />
+  );
+}
+}
 const styles = StyleSheet.create({
   container: {
     flex: 1,
